@@ -1,0 +1,7 @@
+{
+  "SNS_TOPIC_MAPPER": {
+    "HumiditySensor": "humidity_sns_topic",
+    "PressureSensor": "pressure_sns_topic",
+    "TemperatureSensor": "temperature_sns_topic"
+  }
+}
