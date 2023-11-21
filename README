@@ -11,9 +11,9 @@ The project hierarchy:
 
 
 OOD:
-    - CachedInstance: similar to Singleton design, the difference is that the class can create only one object of each type(based on the parameters send to the constructor).
-    - AbstractFactory: use to create an different sensor types and use parent abstract methods
-    - Observer: use in each sensor to monitor its queue and handle the incoming message
+    - CachedInstance: similar to Singleton design, the difference is that the class can create only one object of each type(based on the parameters sent to the constructor).
+    - TemplateMethod: used to create a different sensor type and use parent template methods
+    - Observer: use each sensor to observe the messages entered from its queue and decide on which one to send an alert
 
 Common:
     The common directory holds all the mutual logic of the system.
