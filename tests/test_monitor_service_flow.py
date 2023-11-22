@@ -1,11 +1,17 @@
 import json
 from common.enums.message_source_enum import MessageSourceEnum
 from common.queue_objects.queue_message_object import QueueMessageObject
-from services.monitor_service.main import monitor_service_main, monitor_service_threads, monitor_service_exit_flag
+from services.monitor_service.main import monitor_service_main
 from tests.base_test.base_sensor_system_test import BaseSensorSystemTest
 
 
 class TestMonitorServiceFlow(BaseSensorSystemTest):
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.input_queues_list = [self.humidity_sensor_connector_queue,
+                                  self.pressure_sensor_connector_queue,
+                                  self.temperature_sensor_connector_queue]
 
     async def test_monitor_service_flow_success(self):
         test_message_data_list = [{"message_body": {MessageSourceEnum.HUMIDITY_SENSOR.value: 0},
@@ -27,18 +33,19 @@ class TestMonitorServiceFlow(BaseSensorSystemTest):
         for message_data in test_message_data_list:
             message_obj = QueueMessageObject.parse_obj({"queue_url": message_data["queue"].queue_url,
                                                         "message_body": message_data["message_body"],
-                                                        "message_attributes": {"message_source": message_data["message_source"]}
+                                                        "message_attributes": {
+                                                            "message_source": message_data["message_source"]}
                                                         })
             raw_message = message_obj.json()
             message_data["queue"].q.put(raw_message)
             messages_sent_to_monitor_service.append(raw_message)
 
         monitor_service_main(daemon=False)
-        await self.run_task_until_complete(input_queues_list=[message_data["queue"] for message_data in test_message_data_list],
-                                           threads=monitor_service_threads,
-                                           exit_flag=monitor_service_exit_flag)
+        await self.run_task_until_complete()
 
-        alert_service_q_length = self._calculate_alert_service_q_data(queue_messages_list=messages_sent_to_monitor_service, test_message_data_list=test_message_data_list)
+        alert_service_q_length = self._calculate_alert_service_q_data(
+            queue_messages_list=messages_sent_to_monitor_service,
+            test_message_data_list=test_message_data_list)
         self.assertEqual(alert_service_q_length, 1)
 
         for message_data in test_message_data_list:
@@ -54,7 +61,8 @@ class TestMonitorServiceFlow(BaseSensorSystemTest):
         for _ in range(alert_service_q_length):
             message_in_q = self.alert_service_queue.q.get(timeout=1)
             expected_message = json.dumps({"queue_url": "https://ALERT_SERVICE_QUEUE_URL",
-                                           "message_body": {"message": "PressureSensor: 0 is not in valid range [900, 1100]"},
+                                           "message_body": {
+                                               "message": "PressureSensor: 0 is not in valid range [900, 1100]"},
                                            "message_attributes": {"message_source": "PressureSensor"}})
             self.assertEqual(message_in_q, expected_message)
 
@@ -76,9 +84,7 @@ class TestMonitorServiceFlow(BaseSensorSystemTest):
             message_data["queue"].q.put(json.dumps(message_obj_dict))
 
         monitor_service_main(daemon=False)
-        await self.run_task_until_complete(input_queues_list=[message_data["queue"] for message_data in test_message_data_list],
-                                           threads=monitor_service_threads,
-                                           exit_flag=monitor_service_exit_flag)
+        await self.run_task_until_complete()
 
         # make sure that failed messages exist in the dlq
         self.assertEqual(self.humidity_sensor_connector_queue.dlq.qsize(), len(test_message_data_list))

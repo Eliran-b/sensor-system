@@ -1,17 +1,17 @@
 from common.common_config import CommonConfig
 from common.enums.message_source_enum import MessageSourceEnum
-from common.external_queue_interface import ExternalQueueInterface
+from common.external_queue import ExternalQueue
 from common.queue_objects.queue_message_object import QueueMessageObject
-from common.utils.cached_instance import CachedInstanceMeta
+from common.utils.cached_instance import CachedInstance
+from common.utils.observer_interface import ObserverInterface
 from services.monitor_service.monitor_service_utils.monitor_service_exceptions import InvalidMessage
 from services.monitor_service.monitor_service_utils.sensor_utils import SensorUtils
 
 
-class BaseSensorObserver(metaclass=CachedInstanceMeta):
-    external_queue: ExternalQueueInterface
+class BaseSensorObserver(ObserverInterface, metaclass=CachedInstance):
     message_source: MessageSourceEnum
     utils: [SensorUtils]
-    alert_service_queue: ExternalQueueInterface
+    alert_service_queue: ExternalQueue
     config_dict: dict
 
     def __new__(cls, *args, **kwargs):
@@ -20,14 +20,14 @@ class BaseSensorObserver(metaclass=CachedInstanceMeta):
 
     def __init__(self, queue_url: str, message_source: [MessageSourceEnum], utils_class: [SensorUtils] = SensorUtils):
         self.message_source = message_source
-        self.external_queue = ExternalQueueInterface(queue_url=queue_url)
+        self.external_queue = ExternalQueue(queue_url=queue_url)
         self.utils = utils_class
 
     @staticmethod
     def init_class_attributes():
         # make sure that will initialize once
         if getattr(BaseSensorObserver, "alert_service_queue", None) is None:
-            BaseSensorObserver.alert_service_queue = ExternalQueueInterface(queue_url=CommonConfig.ALERT_SERVICE_QUEUE_URL)
+            BaseSensorObserver.alert_service_queue = ExternalQueue(queue_url=CommonConfig.ALERT_SERVICE_QUEUE_URL)
             BaseSensorObserver.config_dict = SensorUtils.get_config_dict()
 
     def _validate_config_rules(self, message_body: dict):

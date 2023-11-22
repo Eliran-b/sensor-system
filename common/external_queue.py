@@ -4,10 +4,10 @@ import queue
 from pydantic import ValidationError
 from common.enums.message_source_enum import MessageSourceEnum
 from common.queue_objects.queue_message_object import QueueMessageObject
-from common.utils.cached_instance import CachedInstanceMeta
+from common.utils.cached_instance import CachedInstance
 
 
-class ExternalQueueInterface(metaclass=CachedInstanceMeta):
+class ExternalQueue(metaclass=CachedInstance):
     """This class simulate an external queue
         In real q there will be only the receive_messages API and the queue_url would be used to access the Q
     """
@@ -79,7 +79,7 @@ class ExternalQueueInterface(metaclass=CachedInstanceMeta):
         try:
             q_message_dict = QueueMessageObject.parse_obj(message).json()
 
-            destination_q = ExternalQueueInterface(queue_url=queue_url).q
+            destination_q = ExternalQueue(queue_url=queue_url).q
             destination_q.put(item=q_message_dict)
 
             print(f"send message to q: {queue_url}, from source: {message_source}, body: {message_body}")

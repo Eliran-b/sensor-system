@@ -10,10 +10,15 @@ The project hierarchy:
         tests of system flow
 
 
-OOD:
+OOD and OOP:
+    - Singleton: ThreadEventNotifier use singleton pattern to create only one instance of a class
     - CachedInstance: similar to Singleton design, the difference is that the class can create only one object of each type(based on the parameters sent to the constructor).
-    - TemplateMethod: used to create a different sensor type and use parent template methods
-    - Observer: use each sensor to observe the messages entered from its queue and decide on which one to send an alert
+    - TemplateMethod: BaseObserver used to create a different sensor type and use its template methods in each child.
+    - Interface: create ObserverInterface in order to presume structure that all Observers will use in the system.
+    - AbstractClass: use ThreadManager to create an abstraction to manage thread.
+    - Factory: create multiple thread managers in the ThreadEventNotifier to manage multiple threads in one place.
+    - Observer: use message notifier to send notification when new message has arrived to the queue.
+        send the message to the other message observer in order to observe the message and decide if to send an alert
 
 Common:
     The common directory holds all the mutual logic of the system.
@@ -28,6 +33,3 @@ Notes:
      to simplify it I did not implemented any retry of the message processing, it's only to test the general behavior expected of the system.
 
     check out the SystemDesign.pdf file to get a better understanding of the system design.
-
-
-
