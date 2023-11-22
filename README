@@ -1,35 +1,35 @@
 The project hierarchy:
 
     - services:
-        system micro services
+        system microservices
 
     - common:
-        enums, objects, utils, external queues interface and all the logic that is common to the services.
+        enums, objects, utils, external queues interface, and all the logic that is common to the services.
 
     - tests
         tests of system flow
 
 
 OOD and OOP:
-    - Singleton: ThreadEventNotifier use singleton pattern to create only one instance of a class
+    - Singleton: ThreadEventNotifier uses a Singleton pattern to create only one class instance.
     - CachedInstance: similar to Singleton design, the difference is that the class can create only one object of each type(based on the parameters sent to the constructor).
-    - TemplateMethod: BaseObserver used to create a different sensor type and use its template methods in each child.
-    - Interface: create ObserverInterface in order to presume structure that all Observers will use in the system.
+    - TemplateMethod: BaseObserver created a different sensor type and used its template methods in each child.
+    - Interface: create ObserverInterface to presume the structure that all Observers will use in the system.
     - AbstractClass: use ThreadManager to create an abstraction to manage thread.
     - Factory: create multiple thread managers in the ThreadEventNotifier to manage multiple threads in one place.
-    - Observer: use message notifier to send notification when new message has arrived to the queue.
-        send the message to the other message observer in order to observe the message and decide if to send an alert
+    - Observer: use message notifier to send a notification when a new message has arrived in the queue.
+        send the message to the other message observer to observe the message and decide if to send an alert
 
 Common:
     The common directory holds all the mutual logic of the system.
-    I used pydantic to validate the messages data in order to make the flow be more clean and decrease human mistakes.
+    I used Pydantic to validate the message data to make the flow clean and decrease human mistakes.
 
 Requirements:
     python3.9+
     pydantic==1.10.12
 
 Notes:
-    the dlq implementation suppose to demonstrate the queue logic happens behind the scenes.
-     to simplify it I did not implemented any retry of the message processing, it's only to test the general behavior expected of the system.
+    the DeadLetterQueue implementation is supposed to demonstrate the queue logic that happens behind the scenes.
+     to simplify it I did not implement any retry of the message processing, it's only to test the general behavior expected of the system.
 
     check out the SystemDesign.pdf file to get a better understanding of the system design.
