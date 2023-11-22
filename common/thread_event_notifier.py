@@ -22,6 +22,10 @@ class ThreadEventNotifier(metaclass=Singleton):
             for message_object in messages_to_process:
                 executor.submit(observer_obj.run_flow, message_object)
 
+    def stop_notifier_threads(self):
+        for thread in self.thread_managers:
+            thread.stop_thread()
+
     @classmethod
     def start_notifier_threads(cls, message_target_list: list[ObserverInterface], daemon: bool, max_workers: int = None,
                                wait_time_seconds: int = None, max_messages_to_pull: int = None):

@@ -42,14 +42,9 @@ class BaseSensorSystemTest(unittest.IsolatedAsyncioTestCase):
         Singleton._instances = {}
         CachedInstance._instances = {}
 
-    @staticmethod
-    def stop_threads():
-        for thread in ThreadEventNotifier.thread_managers:
-            thread.stop_thread()
-
     async def run_task_until_complete(self):
         for queue_to_wait in self.input_queues_list:
             while not queue_to_wait.q.empty():
                 await asyncio.sleep(1)
 
-        self.stop_threads()
+        ThreadEventNotifier().stop_notifier_threads()
