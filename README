@@ -15,8 +15,7 @@ OOD and OOP:
     - CachedInstance: similar to Singleton design, the difference is that the class can create only one object of each type(based on the parameters sent to the constructor).
     - TemplateMethod: BaseObserver created a different sensor type and used its template methods in each child.
     - Interface: create ObserverInterface to presume the structure that all Observers will use in the system.
-    - AbstractClass: use ThreadManager to create an abstraction to manage thread.
-    - Factory: create multiple thread managers in the ThreadEventNotifier to manage multiple threads in one place.
+    - Abstract: use ThreadManager to create an abstraction to manage threads and create multiple thread managers in the ThreadEventNotifier to manage multiple threads in one place.
     - Observer: use message notifier to send a notification when a new message has arrived in the queue.
         send the message to the other message observer to observe the message and decide if to send an alert
 
